@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Complete Profile</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link rel="stylesheet" href="profile-setup.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>Complete Your Profile</h1>
+
+        <p>Let's finish setting up your HRMS account.</p>
+
+    </div>
+
+    <form id="profileForm">
+
+        <div class="grid">
+
+            <div class="field">
+
+                <label>First Name</label>
+
+                <input id="firstName">
+
+            </div>
+
+            <div class="field">
+
+                <label>Last Name</label>
+
+                <input id="lastName">
+
+            </div>
+
+            <div class="field">
+
+                <label>Phone</label>
+
+                <input id="phone">
+
+            </div>
+
+            <div class="field">
+
+                <label>Department</label>
+
+                <select id="department">
+
+                    <option value="">Select Department</option>
+
+                </select>
+
+            </div>
+
+            <div class="field">
+
+                <label>Designation</label>
+
+                <input id="designation">
+
+            </div>
+
+            <div class="field">
+
+                <label>Date of Birth</label>
+
+                <input type="date" id="dob">
+
+            </div>
+
+            <div class="field">
+
+                <label>Gender</label>
+
+                <select id="gender">
+
+                    <option value="">Select</option>
+
+                    <option>Male</option>
+
+                    <option>Female</option>
+
+                    <option>Other</option>
+
+                </select>
+
+            </div>
+
+            <div class="field full">
+
+                <label>Address</label>
+
+                <textarea id="address"></textarea>
+
+            </div>
+
+            <div class="field">
+
+                <label>Emergency Contact Name</label>
+
+                <input id="emergencyName">
+
+            </div>
+
+            <div class="field">
+
+                <label>Emergency Contact Phone</label>
+
+                <input id="emergencyPhone">
+
+            </div>
+
+        </div>
+
+        <button type="submit">
+            Save Profile
+        </button>
+
+    </form>
+
+</div>
+
+<script>
+lucide.createIcons();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="profile-setup.js"></script>
+
+</body>
+</html>

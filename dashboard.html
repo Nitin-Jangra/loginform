@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HRMS Dashboard</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            HR<span>i</span>MS
+        </div>
+
+        <nav>
+
+            <a class="active">
+                <i data-lucide="layout-dashboard"></i>
+                Dashboard
+            </a>
+
+            <a>
+                <i data-lucide="user"></i>
+                My Profile
+            </a>
+
+            <a>
+                <i data-lucide="calendar-days"></i>
+                Attendance
+            </a>
+
+            <a>
+                <i data-lucide="calendar-range"></i>
+                Leave
+            </a>
+
+            <a>
+                <i data-lucide="wallet"></i>
+                Payroll
+            </a>
+
+            <a id="logoutBtn">
+                <i data-lucide="log-out"></i>
+                Logout
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <main class="content">
+
+        <header class="topbar">
+
+            <div>
+
+                <h1 id="welcomeName">Good Morning 👋</h1>
+
+                <p>Welcome to your HRMS dashboard.</p>
+
+            </div>
+
+            <div class="profile-mini">
+
+                <div class="avatar"></div>
+
+            </div>
+
+        </header>
+
+        <section class="hero-card">
+
+            <div>
+
+                <h2>Employee Summary</h2>
+
+                <p id="employeeId">Employee ID: --</p>
+
+            </div>
+
+            <button class="blue-btn">
+                View Profile
+            </button>
+
+        </section>
+
+        <section class="cards">
+
+            <div class="card">
+
+                <i data-lucide="calendar-check"></i>
+
+                <h3>Attendance</h3>
+
+                <span>Present</span>
+
+            </div>
+
+            <div class="card">
+
+                <i data-lucide="calendar-range"></i>
+
+                <h3>Leave Balance</h3>
+
+                <span>12 Days</span>
+
+            </div>
+
+            <div class="card">
+
+                <i data-lucide="wallet"></i>
+
+                <h3>Payroll</h3>
+
+                <span>Available</span>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+lucide.createIcons();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="dashboard.js"></script>
+
+</body>
+</html>
+

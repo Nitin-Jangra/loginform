@@ -19,8 +19,7 @@ function toggleForms() {
     registerForm.classList.toggle("active");
 }
 
-// Redirect URL
-const redirectUrl = "https://nitin-jangra.github.io/hrms-frontend/index.html";
+
 
 // ================================
 // Login
@@ -58,7 +57,22 @@ document.getElementById("loginBtn").addEventListener("click", async function () 
     localStorage.setItem("loggedInUser", JSON.stringify(data));
 
     // Redirect without alert
-    window.location.href = redirectUrl;
+    // Save logged-in user
+localStorage.setItem("loggedInUser", JSON.stringify(data));
+
+// Check if profile exists
+const { data: profile } = await supabaseClient
+    .from("employee_profiles")
+    .select("id")
+    .eq("user_id", data.id)
+    .maybeSingle();
+
+// Redirect based on profile
+if (profile) {
+    window.location.href = "dashboard.html";
+} else {
+    window.location.href = "profile-setup.html";
+}
 });
 
 
