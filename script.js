@@ -7,7 +7,10 @@ const supabaseClient = window.supabase.createClient(
     supabaseKey
 );
 
+// ================================
 // Toggle Login / Signup Forms
+// ================================
+
 function toggleForms() {
     const loginForm = document.getElementById("login-form");
     const registerForm = document.getElementById("register-form");
@@ -16,7 +19,10 @@ function toggleForms() {
     registerForm.classList.toggle("active");
 }
 
+// ================================
 // Login
+// ================================
+
 document.getElementById("loginBtn").addEventListener("click", async function () {
 
     const email = document.getElementById("loginEmail").value.trim();
@@ -32,20 +38,35 @@ document.getElementById("loginBtn").addEventListener("click", async function () 
         .select("*")
         .eq("email", email)
         .eq("password", password)
-        .single();
+        .maybeSingle();
 
-    if (error || !data) {
+    if (error) {
+        console.error("Login Error:", error);
+        alert(error.message);
+        return;
+    }
+
+    if (!data) {
         alert("Invalid email or password.");
         return;
     }
 
+    // Save logged-in user (we'll use this later on the dashboard)
+    localStorage.setItem("loggedInUser", JSON.stringify(data));
+
     alert("Login successful!");
 
+    // Redirect after successful login
     window.location.href = "https://nitin-jangra.github.io/hrms-frontend/index.html";
 });
 
+
+// ================================
 // Signup
+// ================================
+
 document.getElementById("signupBtn").addEventListener("click", async function () {
+
     const name = document.getElementById("signupName").value.trim();
     const email = document.getElementById("signupEmail").value.trim();
     const password = document.getElementById("signupPassword").value;
@@ -56,28 +77,42 @@ document.getElementById("signupBtn").addEventListener("click", async function ()
     }
 
     // Check if email already exists
-    const { data: existingUser } = await supabaseClient
+    const { data: existingUser, error: checkError } = await supabaseClient
         .from("users")
-        .select("id")
+        .select("email")
         .eq("email", email)
         .maybeSingle();
+
+    if (checkError) {
+        console.error("Signup Check Error:", checkError);
+        alert(checkError.message);
+        return;
+    }
 
     if (existingUser) {
         alert("Email already registered. Please log in or use Forgot Password.");
         return;
     }
 
-    // Create new account
+    // Insert new user
     const { error } = await supabaseClient
         .from("users")
         .insert([
-            { name, email, password }
+            {
+                name,
+                email,
+                password
+            }
         ]);
 
     if (error) {
-        console.error(error);
-        alert("Signup failed.");
-    } else {
-        alert("Account created successfully!");
+        console.error("Signup Error:", error);
+        alert(error.message);
+        return;
     }
+
+    alert("Account created successfully!");
+
+    // Switch back to Login form after signup
+    toggleForms();
 });
