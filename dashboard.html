@@ -207,110 +207,98 @@
 
             <!-- Greeting + Punch clock -->
             <section class="greeting-row reveal">
-
                 <div class="greet-text">
-                    <h1 id="welcomeName">Good Morning, Nitin! 👋</h1>
+                    <h1 id="welcomeName">Good Morning 👋</h1>
+                    <div class="employee-meta">
+                        <span>
+                            <i data-lucide="badge"></i>
+                            <span id="employeeId">EMP-0001</span>
+                        </span>
+                        <span>
+                            <i data-lucide="briefcase"></i>
+                            <span id="designation">Employee</span>
+                        </span>
+                        <span>
+                            <i data-lucide="building"></i>
+                            <span id="departmentName">Department</span>
+                        </span>
+                    </div>
                     <p class="greet-date">
                         <i data-lucide="calendar-days"></i>
-                        <span id="currentDate">Thursday, 12 June 2025</span>
+                        <span id="currentDate">Loading...</span>
                     </p>
                 </div>
-
                 <div class="punch-actions">
                     <button class="btn btn-primary" id="checkInBtn">
                         <i data-lucide="log-in"></i>
-                        <span class="pulse-dot" aria-hidden="true"></span>
+                        <span class="pulse-dot"></span>
                         Check In
                     </button>
-                    <button class="btn btn-ghost">
+                    <button class="btn btn-ghost" id="checkOutBtn">
                         <i data-lucide="log-out"></i>
                         Check Out
                     </button>
                 </div>
-
             </section>
 
             <!-- Profile + Today's Attendance -->
             <section class="hero-grid">
-
                 <article class="card profile-card reveal" style="--d:.06s">
-
                     <div class="profile-top">
-
                         <div class="avatar avatar-xl">
                             NJ
                             <span class="online-dot" aria-hidden="true"></span>
                         </div>
-
                         <div class="profile-id">
                             <h3>Nitin Jangra <i data-lucide="badge-check" class="verified"></i></h3>
                             <p class="role">UX Designer</p>
                             <span class="chip">Design Department</span>
                         </div>
-
                     </div>
-
                     <ul class="profile-meta">
-
                         <li>
                             <i data-lucide="credit-card"></i>
                             <span id="employeeId">Employee ID: --</span>
                         </li>
-
                         <li>
                             <i data-lucide="mail"></i>
                             <span>nitin.jangra@company.com</span>
                         </li>
-
                         <li>
                             <i data-lucide="phone"></i>
                             <span>+91 98765 43210</span>
                         </li>
-
                         <li>
                             <i data-lucide="map-pin"></i>
                             <span>Gurgaon, Haryana, India</span>
                         </li>
-
                     </ul>
-
                 </article>
-
                 <article class="attendance-card reveal" style="--d:.12s">
-
                     <div class="att-head">
                         <h3>Today's Attendance</h3>
                         <span class="pill-present">Present</span>
                     </div>
-
                     <div class="att-grid">
-
                         <div class="att-cell">
                             <p class="att-label">Check In</p>
                             <p class="att-time">09:05 <small>AM</small></p>
                             <p class="att-sub">12 June 2025</p>
                         </div>
-
                         <span class="att-divider" aria-hidden="true"></span>
-
                         <div class="att-cell">
                             <p class="att-label">Check Out</p>
                             <p class="att-time dim">--:-- <small>--</small></p>
                             <p class="att-sub">Not Checked Out</p>
                         </div>
-
                     </div>
-
                     <div class="att-total">
                         <p class="att-label">Total Working Time</p>
                         <p class="att-work"><i data-lucide="clock"></i> 07h 35m</p>
                         <p class="att-break">Break: <b>00h 45m</b></p>
                     </div>
-
                     <i data-lucide="calendar-clock" class="att-watermark" aria-hidden="true"></i>
-
                 </article>
-
             </section>
 
             <!-- KPI Stats -->
