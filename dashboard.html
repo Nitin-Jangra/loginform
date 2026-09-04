@@ -14,6 +14,10 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <link rel="stylesheet" href="dashboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+
 </head>
 
 <body>
@@ -30,32 +34,32 @@
 
             <a class="active">
                 <i data-lucide="layout-dashboard"></i>
-                Dashboard
+                <span>Dashboard</span>
             </a>
 
-            <a>
+            <a id="viewProfileBtn">
                 <i data-lucide="user"></i>
-                My Profile
+                <span>My Profile</span>
             </a>
 
             <a>
                 <i data-lucide="calendar-days"></i>
-                Attendance
+                <span>Attendance</span>
             </a>
 
             <a>
                 <i data-lucide="calendar-range"></i>
-                Leave
+                <span>Leave</span>
             </a>
 
             <a>
                 <i data-lucide="wallet"></i>
-                Payroll
+                <span>Payroll</span>
             </a>
 
             <a id="logoutBtn">
                 <i data-lucide="log-out"></i>
-                Logout
+                <span>Logout</span>
             </a>
 
         </nav>
@@ -70,13 +74,21 @@
 
                 <h1 id="welcomeName">Good Morning 👋</h1>
 
-                <p>Welcome to your HRMS dashboard.</p>
+                <p id="todayDate">Loading...</p>
 
             </div>
 
-            <div class="profile-mini">
+            <div class="profile-chip">
 
-                <div class="avatar"></div>
+                <div class="avatar" id="topAvatar">NJ</div>
+
+                <div class="pc-text">
+
+                    <b id="chipName">Loading...</b>
+
+                    <small id="chipRole">Employee</small>
+
+                </div>
 
             </div>
 
@@ -88,49 +100,141 @@
 
                 <h2>Employee Summary</h2>
 
-                <p id="employeeId">Employee ID: --</p>
+                <p id="summaryEmployeeId">Employee ID: --</p>
 
             </div>
 
-            <button class="blue-btn">
+            <button class="blue-btn" id="heroProfileBtn">
                 View Profile
             </button>
 
         </section>
 
-        <section class="cards">
+        <div class="main-grid">
 
-            <div class="card">
+            <section class="profile-card">
 
-                <i data-lucide="calendar-check"></i>
+                <div class="profile-top">
 
-                <h3>Attendance</h3>
+                    <div class="avatar avatar-xl" id="avatarInitials">NJ</div>
 
-                <span>Present</span>
+                    <div class="profile-id">
 
-            </div>
+                        <h3 id="profileName">Loading...</h3>
 
-            <div class="card">
+                        <p class="role" id="profileDesignation">Employee</p>
 
-                <i data-lucide="calendar-range"></i>
+                        <span class="chip" id="profileDepartment">
+                            Department
+                        </span>
 
-                <h3>Leave Balance</h3>
+                    </div>
 
-                <span>12 Days</span>
+                </div>
 
-            </div>
+                <ul class="profile-meta">
 
-            <div class="card">
+                    <li>
 
-                <i data-lucide="wallet"></i>
+                        <i data-lucide="badge"></i>
 
-                <h3>Payroll</h3>
+                        <span id="employeeIdText">Employee ID</span>
 
-                <span>Available</span>
+                    </li>
 
-            </div>
+                    <li>
 
-        </section>
+                        <i data-lucide="mail"></i>
+
+                        <span id="emailText">Email</span>
+
+                    </li>
+
+                    <li>
+
+                        <i data-lucide="phone"></i>
+
+                        <span id="phoneText">Phone</span>
+
+                    </li>
+
+                    <li>
+
+                        <i data-lucide="map-pin"></i>
+
+                        <span id="locationText">Location</span>
+
+                    </li>
+
+                </ul>
+
+            </section>
+
+            <section class="cards">
+
+                <div class="card">
+
+                    <i data-lucide="calendar-check"></i>
+
+                    <h3>Attendance</h3>
+
+                    <span>Coming Soon</span>
+
+                </div>
+
+                <div class="card">
+
+                    <i data-lucide="calendar-range"></i>
+
+                    <h3>Leave Balance</h3>
+
+                    <span>Coming Soon</span>
+
+                </div>
+
+                <div class="card">
+
+                    <i data-lucide="wallet"></i>
+
+                    <h3>Payroll</h3>
+
+                    <span>Coming Soon</span>
+
+                </div>
+
+                <div class="card">
+
+                    <i data-lucide="building"></i>
+
+                    <h3>Department</h3>
+
+                    <span id="departmentCard">--</span>
+
+                </div>
+
+                <div class="card">
+
+                    <i data-lucide="briefcase"></i>
+
+                    <h3>Designation</h3>
+
+                    <span id="designationCard">--</span>
+
+                </div>
+
+                <div class="card">
+
+                    <i data-lucide="calendar"></i>
+
+                    <h3>Joining Date</h3>
+
+                    <span id="joiningCard">--</span>
+
+                </div>
+
+            </section>
+
+        </div>
 
     </main>
 
@@ -140,9 +244,7 @@
 lucide.createIcons();
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="dashboard.js"></script>
 
 </body>
 </html>
-
