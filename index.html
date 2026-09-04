@@ -1,122 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HRMS Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<title>HRMS Portal</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div class="page">
+<div class="wrapper">
 
-    <!-- Left Branding -->
-    <div class="branding">
+    <div class="left-panel">
 
         <div class="logo">
-            <span class="blue">HR</span><span class="red">i</span><span class="blue">MS</span>
+            HR<span>i</span>MS
         </div>
 
-        <div class="branding-content">
+        <div class="hero">
 
-            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                 alt="Employee Illustration">
+            <img src="https://cdn-icons-png.flaticon.com/512/6997/6997662.png">
 
-            <h1>Manage Your Workforce Smarter</h1>
+            <h1>Modern Workforce Management</h1>
 
             <p>
-                Secure employee management, attendance,
-                payroll and workforce insights —
-                all from one modern platform.
+                Attendance, Payroll, Employees,
+                Recruitment and everything your HR team needs —
+                all in one beautiful workspace.
             </p>
 
         </div>
 
     </div>
 
-    <!-- Right Authentication -->
-    <div class="auth-area">
 
-        <!-- Login -->
-        <div id="login-form" class="form-card active">
+    <div class="right-panel">
+
+        <!-- LOGIN -->
+
+        <div id="login-form" class="card active">
 
             <h2>Welcome Back 👋</h2>
             <p class="subtitle">Sign in to continue</p>
 
-            <div class="input-group">
-                <label>Email</label>
+            <div class="field">
+
+                <i data-lucide="mail"></i>
+
                 <input
                     type="email"
                     id="loginEmail"
-                    placeholder="Enter your email">
+                    placeholder="Email">
+
             </div>
 
-            <div class="input-group">
-                <label>Password</label>
+            <div class="field password-field">
+
+                <i data-lucide="lock"></i>
+
                 <input
                     type="password"
                     id="loginPassword"
-                    placeholder="Enter your password">
+                    placeholder="Password">
+
+                <button type="button" class="eye">
+                    <i data-lucide="eye"></i>
+                </button>
+
             </div>
 
-            <div class="extra">
+            <div class="top-row">
+
                 <a href="#">Forgot Password?</a>
+
             </div>
 
-            <button id="loginBtn">
+            <button id="loginBtn" class="primary-btn">
                 Sign In
             </button>
 
-            <p class="switch-text">
+            <p class="switch">
                 Don't have an account?
+
                 <a href="#" onclick="toggleForms()">Create Account</a>
             </p>
 
         </div>
 
-        <!-- Signup -->
-        <div id="register-form" class="form-card">
+        <!-- SIGNUP -->
+
+        <div id="register-form" class="card">
 
             <h2>Create Account</h2>
-            <p class="subtitle">Join HRMS today</p>
+            <p class="subtitle">Start your journey</p>
 
-            <div class="input-group">
-                <label>Full Name</label>
+            <div class="field">
+
+                <i data-lucide="user"></i>
+
                 <input
                     type="text"
                     id="signupName"
-                    placeholder="Enter your name">
+                    placeholder="Full Name">
+
             </div>
 
-            <div class="input-group">
-                <label>Email</label>
+            <div class="field">
+
+                <i data-lucide="mail"></i>
+
                 <input
                     type="email"
                     id="signupEmail"
-                    placeholder="Enter your email">
+                    placeholder="Email">
+
             </div>
 
-            <div class="input-group">
-                <label>Password</label>
+            <div class="field password-field">
+
+                <i data-lucide="lock"></i>
+
                 <input
                     type="password"
                     id="signupPassword"
-                    placeholder="Create password">
+                    placeholder="Password">
+
             </div>
 
-            <button id="signupBtn">
+            <button id="signupBtn" class="primary-btn">
                 Create Account
             </button>
 
-            <p class="switch-text">
+            <p class="switch">
                 Already have an account?
-                <a href="#" onclick="toggleForms()">Log In</a>
+
+                <a href="#" onclick="toggleForms()">Login</a>
             </p>
 
         </div>
@@ -124,6 +151,17 @@
     </div>
 
 </div>
+
+<script>
+lucide.createIcons();
+
+document.querySelectorAll(".eye").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+        const input=btn.parentElement.querySelector("input");
+        input.type=input.type==="password"?"text":"password";
+    });
+});
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
