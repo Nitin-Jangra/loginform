@@ -4,143 +4,185 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Complete Profile</title>
+<title>Complete Employee Profile</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<script src="https://unpkg.com/lucide@latest"></script>
-
 <link rel="stylesheet" href="profile-setup.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
 </head>
 
 <body>
 
-<div class="container">
+<div class="page">
 
     <div class="header">
+        <div>
+            <h1>Complete Your Employee Profile</h1>
+            <p>Finish your HRMS onboarding.</p>
+        </div>
 
-        <h1>Complete Your Profile</h1>
-
-        <p>Let's finish setting up your HRMS account.</p>
-
+        <div class="progress-card">
+            <span>Profile Setup</span>
+            <strong>100%</strong>
+        </div>
     </div>
 
     <form id="profileForm">
 
-        <div class="grid">
+        <div class="section">
+            <h2>Personal Information</h2>
 
-            <div class="field">
+            <div class="grid">
 
-                <label>First Name</label>
+                <div class="field">
+                    <label>First Name</label>
+                    <input id="firstName" required>
+                </div>
 
-                <input id="firstName">
+                <div class="field">
+                    <label>Last Name</label>
+                    <input id="lastName" required>
+                </div>
 
-            </div>
+                <div class="field">
+                    <label>Date of Birth</label>
+                    <input type="date" id="dob">
+                </div>
 
-            <div class="field">
+                <div class="field">
+                    <label>Gender</label>
+                    <select id="gender">
+                        <option value="">Select</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Other</option>
+                    </select>
+                </div>
 
-                <label>Last Name</label>
+                <div class="field">
+                    <label>Blood Group</label>
+                    <select id="bloodGroup">
+                        <option value="">Select</option>
+                        <option>A+</option>
+                        <option>A-</option>
+                        <option>B+</option>
+                        <option>B-</option>
+                        <option>AB+</option>
+                        <option>AB-</option>
+                        <option>O+</option>
+                        <option>O-</option>
+                    </select>
+                </div>
 
-                <input id="lastName">
-
-            </div>
-
-            <div class="field">
-
-                <label>Phone</label>
-
-                <input id="phone">
-
-            </div>
-
-            <div class="field">
-
-                <label>Department</label>
-
-                <select id="department">
-
-                    <option value="">Select Department</option>
-
-                </select>
-
-            </div>
-
-            <div class="field">
-
-                <label>Designation</label>
-
-                <input id="designation">
-
-            </div>
-
-            <div class="field">
-
-                <label>Date of Birth</label>
-
-                <input type="date" id="dob">
+                <div class="field">
+                    <label>Phone</label>
+                    <input id="phone" placeholder="+91 9876543210">
+                </div>
 
             </div>
+        </div>
 
-            <div class="field">
+        <div class="section">
 
-                <label>Gender</label>
+            <h2>Employment Information</h2>
 
-                <select id="gender">
+            <div class="grid">
 
-                    <option value="">Select</option>
+                <div class="field">
+                    <label>Department</label>
+                    <select id="department" required>
+                        <option value="">Select Department</option>
+                    </select>
+                </div>
 
-                    <option>Male</option>
+                <div class="field">
+                    <label>Designation</label>
+                    <input id="designation">
+                </div>
 
-                    <option>Female</option>
+                <div class="field">
+                    <label>Reporting Manager</label>
+                    <select id="manager">
+                        <option value="">Select Manager</option>
+                    </select>
+                </div>
 
-                    <option>Other</option>
-
-                </select>
-
-            </div>
-
-            <div class="field full">
-
-                <label>Address</label>
-
-                <textarea id="address"></textarea>
-
-            </div>
-
-            <div class="field">
-
-                <label>Emergency Contact Name</label>
-
-                <input id="emergencyName">
-
-            </div>
-
-            <div class="field">
-
-                <label>Emergency Contact Phone</label>
-
-                <input id="emergencyPhone">
+                <div class="field">
+                    <label>Joining Date</label>
+                    <input type="date" id="joiningDate">
+                </div>
 
             </div>
 
         </div>
 
-        <button type="submit">
-            Save Profile
-        </button>
+        <div class="section">
+
+            <h2>Address</h2>
+
+            <div class="grid">
+
+                <div class="field full">
+                    <label>Full Address</label>
+                    <textarea id="address"></textarea>
+                </div>
+
+                <div class="field">
+                    <label>City</label>
+                    <input id="city">
+                </div>
+
+                <div class="field">
+                    <label>State</label>
+                    <input id="state">
+                </div>
+
+                <div class="field">
+                    <label>Country</label>
+                    <input id="country">
+                </div>
+
+                <div class="field">
+                    <label>Pincode</label>
+                    <input id="pincode">
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="section">
+
+            <h2>Emergency Contact</h2>
+
+            <div class="grid">
+
+                <div class="field">
+                    <label>Contact Name</label>
+                    <input id="emergencyName">
+                </div>
+
+                <div class="field">
+                    <label>Contact Phone</label>
+                    <input id="emergencyPhone">
+                </div>
+
+            </div>
+
+        </div>
+
+        <button type="submit">Save Profile</button>
 
     </form>
 
 </div>
 
-<script>
-lucide.createIcons();
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="profile-setup.js"></script>
 
 </body>
