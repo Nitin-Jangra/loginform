@@ -17,8 +17,9 @@ function toggleForms() {
 }
 
 // Login
-document.getElementById("loginBtn").addEventListener("click", function () {
-    const email = document.getElementById("loginEmail").value;
+document.getElementById("loginBtn").addEventListener("click", async function () {
+
+    const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value;
 
     if (!email || !password) {
@@ -26,18 +27,25 @@ document.getElementById("loginBtn").addEventListener("click", function () {
         return;
     }
 
-    const loginData = {
-        email,
-        password
-    };
+    const { data, error } = await supabaseClient
+        .from("users")
+        .select("*")
+        .eq("email", email)
+        .eq("password", password)
+        .single();
 
-    console.log("Login Data:", JSON.stringify(loginData));
+    if (error || !data) {
+        alert("Invalid email or password.");
+        return;
+    }
+
+    alert("Login successful!");
 });
 
 // Signup
 document.getElementById("signupBtn").addEventListener("click", async function () {
-    const name = document.getElementById("signupName").value;
-    const email = document.getElementById("signupEmail").value;
+    const name = document.getElementById("signupName").value.trim();
+    const email = document.getElementById("signupEmail").value.trim();
     const password = document.getElementById("signupPassword").value;
 
     if (!name || !email || !password) {
@@ -45,21 +53,29 @@ document.getElementById("signupBtn").addEventListener("click", async function ()
         return;
     }
 
-    const { data, error } = await supabaseClient
+    // Check if email already exists
+    const { data: existingUser } = await supabaseClient
+        .from("users")
+        .select("id")
+        .eq("email", email)
+        .maybeSingle();
+
+    if (existingUser) {
+        alert("Email already registered. Please log in or use Forgot Password.");
+        return;
+    }
+
+    // Create new account
+    const { error } = await supabaseClient
         .from("users")
         .insert([
-            {
-                name: name,
-                email: email,
-                password: password
-            }
+            { name, email, password }
         ]);
 
     if (error) {
-        console.error("Signup Error:", error);
-        alert("Signup failed!");
+        console.error(error);
+        alert("Signup failed.");
     } else {
-        console.log("User Created:", data);
         alert("Account created successfully!");
     }
 });
