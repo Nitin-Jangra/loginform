@@ -19,6 +19,9 @@ function toggleForms() {
     registerForm.classList.toggle("active");
 }
 
+// Redirect URL
+const redirectUrl = "https://nitin-jangra.github.io/hrms-frontend/index.html";
+
 // ================================
 // Login
 // ================================
@@ -51,13 +54,11 @@ document.getElementById("loginBtn").addEventListener("click", async function () 
         return;
     }
 
-    // Save logged-in user (we'll use this later on the dashboard)
+    // Save logged-in user
     localStorage.setItem("loggedInUser", JSON.stringify(data));
 
-    alert("Login successful!");
-
-    // Redirect after successful login
-    window.location.href = "https://nitin-jangra.github.io/hrms-frontend/index.html";
+    // Redirect without alert
+    window.location.href = redirectUrl;
 });
 
 
@@ -94,16 +95,12 @@ document.getElementById("signupBtn").addEventListener("click", async function ()
         return;
     }
 
-    // Insert new user
-    const { error } = await supabaseClient
+    // Create new account
+    const { data: newUser, error } = await supabaseClient
         .from("users")
-        .insert([
-            {
-                name,
-                email,
-                password
-            }
-        ]);
+        .insert([{ name, email, password }])
+        .select()
+        .single();
 
     if (error) {
         console.error("Signup Error:", error);
@@ -111,8 +108,9 @@ document.getElementById("signupBtn").addEventListener("click", async function ()
         return;
     }
 
-    alert("Account created successfully!");
+    // Save the newly created user
+    localStorage.setItem("loggedInUser", JSON.stringify(newUser));
 
-    // Switch back to Login form after signup
-    toggleForms();
+    // Redirect without alert
+    window.location.href = redirectUrl;
 });
