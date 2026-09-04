@@ -3,55 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login & Create Account</title>
+    <title>HRMS Login</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="container">
-    <!-- Login Form -->
-    <div id="login-form" class="form-container active">
-        <h2>Log In</h2>
-        <form>
-            <div class="input-group">
-                <label for="loginEmail">Email</label>
-                <input type="email" id="loginEmail" required placeholder="Enter your email">
-            </div>
-            <div class="input-group">
-                <label for="loginPassword">Password</label>
-                <input type="password" id="loginPassword" required placeholder="Enter your password">
-            </div>
-            <button type="button" id="loginBtn">Log In</button>
-        </form>
-        <div class="switch-text">
-            Don't have an account? <a onclick="toggleForms()">Create new account</a>
+<div class="page">
+
+    <!-- Left Branding -->
+    <div class="branding">
+
+        <div class="logo">
+            <span class="blue">HR</span><span class="red">i</span><span class="blue">MS</span>
         </div>
+
+        <div class="branding-content">
+
+            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                 alt="Employee Illustration">
+
+            <h1>Manage Your Workforce Smarter</h1>
+
+            <p>
+                Secure employee management, attendance,
+                payroll and workforce insights —
+                all from one modern platform.
+            </p>
+
+        </div>
+
     </div>
 
-    <!-- Register Form -->
-    <div id="register-form" class="form-container">
-        <h2>Create Account</h2>
-        <form>
+    <!-- Right Authentication -->
+    <div class="auth-area">
+
+        <!-- Login -->
+        <div id="login-form" class="form-card active">
+
+            <h2>Welcome Back 👋</h2>
+            <p class="subtitle">Sign in to continue</p>
+
             <div class="input-group">
-                <label for="signupName">Full Name</label>
-                <input type="text" id="signupName" required placeholder="Enter your full name">
+                <label>Email</label>
+                <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="Enter your email">
             </div>
+
             <div class="input-group">
-                <label for="signupEmail">Email</label>
-                <input type="email" id="signupEmail" required placeholder="Enter your email">
+                <label>Password</label>
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Enter your password">
             </div>
-            <div class="input-group">
-                <label for="signupPassword">Password</label>
-                <input type="password" id="signupPassword" required placeholder="Enter your password">
+
+            <div class="extra">
+                <a href="#">Forgot Password?</a>
             </div>
-            <button type="button" id="signupBtn">Sign Up</button>
-        </form>
-        <div class="switch-text">
-            Already have an account? <a onclick="toggleForms()">Log In</a>
+
+            <button id="loginBtn">
+                Sign In
+            </button>
+
+            <p class="switch-text">
+                Don't have an account?
+                <a href="#" onclick="toggleForms()">Create Account</a>
+            </p>
+
         </div>
+
+        <!-- Signup -->
+        <div id="register-form" class="form-card">
+
+            <h2>Create Account</h2>
+            <p class="subtitle">Join HRMS today</p>
+
+            <div class="input-group">
+                <label>Full Name</label>
+                <input
+                    type="text"
+                    id="signupName"
+                    placeholder="Enter your name">
+            </div>
+
+            <div class="input-group">
+                <label>Email</label>
+                <input
+                    type="email"
+                    id="signupEmail"
+                    placeholder="Enter your email">
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input
+                    type="password"
+                    id="signupPassword"
+                    placeholder="Create password">
+            </div>
+
+            <button id="signupBtn">
+                Create Account
+            </button>
+
+            <p class="switch-text">
+                Already have an account?
+                <a href="#" onclick="toggleForms()">Log In</a>
+            </p>
+
+        </div>
+
     </div>
+
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
+
 </body>
 </html>
