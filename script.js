@@ -40,6 +40,8 @@ document.getElementById("loginBtn").addEventListener("click", async function () 
     }
 
     alert("Login successful!");
+
+    window.location.href = "https://nitin-jangra.github.io/hrms-frontend/index.html";
 });
 
 // Signup
