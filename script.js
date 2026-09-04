@@ -19,8 +19,6 @@ function toggleForms() {
     registerForm.classList.toggle("active");
 }
 
-
-
 // ================================
 // Login
 // ================================
@@ -56,28 +54,29 @@ document.getElementById("loginBtn").addEventListener("click", async function () 
     // Save logged-in user
     localStorage.setItem("loggedInUser", JSON.stringify(data));
 
-    // Redirect without alert
-    // Save logged-in user
-localStorage.setItem("loggedInUser", JSON.stringify(data));
+    // Check whether employee profile exists
+    const { data: profile, error: profileError } = await supabaseClient
+        .from("employee_profiles")
+        .select("id")
+        .eq("user_id", data.id)
+        .maybeSingle();
 
-// Check if profile exists
-const { data: profile } = await supabaseClient
-    .from("employee_profiles")
-    .select("id")
-    .eq("user_id", data.id)
-    .maybeSingle();
+    if (profileError) {
+        console.error("Profile Check Error:", profileError);
+        alert(profileError.message);
+        return;
+    }
 
-// Redirect based on profile
-if (profile) {
-    window.location.href = "dashboard.html";
-} else {
-    window.location.href = "profile-setup.html";
-}
+    // Redirect
+    if (profile) {
+        window.location.href = "dashboard.html";
+    } else {
+        window.location.href = "profile-setup.html";
+    }
 });
 
-
 // ================================
-// Signup
+// Signup (Admin creates employee)
 // ================================
 
 document.getElementById("signupBtn").addEventListener("click", async function () {
@@ -91,7 +90,7 @@ document.getElementById("signupBtn").addEventListener("click", async function ()
         return;
     }
 
-    // Check if email already exists
+    // Check duplicate email
     const { data: existingUser, error: checkError } = await supabaseClient
         .from("users")
         .select("email")
@@ -105,14 +104,20 @@ document.getElementById("signupBtn").addEventListener("click", async function ()
     }
 
     if (existingUser) {
-        alert("Email already registered. Please log in or use Forgot Password.");
+        alert("Email already registered.");
         return;
     }
 
-    // Create new account
+    // Create employee login
     const { data: newUser, error } = await supabaseClient
         .from("users")
-        .insert([{ name, email, password }])
+        .insert([
+            {
+                name,
+                email,
+                password
+            }
+        ])
         .select()
         .single();
 
@@ -122,9 +127,9 @@ document.getElementById("signupBtn").addEventListener("click", async function ()
         return;
     }
 
-    // Save the newly created user
+    // Save employee
     localStorage.setItem("loggedInUser", JSON.stringify(newUser));
 
-    // Redirect without alert
-    window.location.href = redirectUrl;
+    // Admin now completes employee profile
+    window.location.href = "profile-setup.html";
 });
