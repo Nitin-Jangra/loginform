@@ -146,7 +146,11 @@ padding:30px;
 
 background:white;
 
-height:calc(100vh - 60px);
+/* FIX: was height:calc(100vh - 60px) which forced page overflow
+   once the header sits above it inside .main-content.
+   min-height fills the remaining space without scrollbars. */
+
+min-height:calc(100vh - 170px);
 
 border-radius:var(--radius);
 
@@ -199,6 +203,9 @@ font-size:22px;
 justify-content:center;
 
 }
+
+/* FIX: labels are now wrapped in <span> in the HTML,
+   so this rule actually works */
 
 .sidebar nav a span{
 
@@ -285,6 +292,7 @@ min-height:400px;
 }
 
 }
+
 /* ===========================
    Top Header
 =========================== */

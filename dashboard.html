@@ -12,7 +12,16 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+<!-- FIX: Load Supabase JS library (dashboard.js needs it) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- FIX: Lucide must load BEFORE dashboard.js uses it -->
 <script src="https://unpkg.com/lucide@latest"></script>
+
+<!-- If you keep your Supabase credentials in a separate config file,
+     include it here (it must be loaded BEFORE dashboard.js):
+<script src="supabase-config.js"></script>
+-->
 
 <link rel="stylesheet" href="dashboard.css">
 
@@ -34,37 +43,37 @@
 
             <a class="active">
                 <i data-lucide="layout-dashboard"></i>
-                Dashboard
+                <span>Dashboard</span>
             </a>
 
             <a>
                 <i data-lucide="users"></i>
-                Employees
+                <span>Employees</span>
             </a>
 
             <a>
                 <i data-lucide="calendar-days"></i>
-                Attendance
+                <span>Attendance</span>
             </a>
 
             <a>
                 <i data-lucide="calendar-range"></i>
-                Leave
+                <span>Leave</span>
             </a>
 
             <a>
                 <i data-lucide="wallet"></i>
-                Payroll
+                <span>Payroll</span>
             </a>
 
             <a>
                 <i data-lucide="folder"></i>
-                Documents
+                <span>Documents</span>
             </a>
 
             <a>
                 <i data-lucide="settings"></i>
-                Settings
+                <span>Settings</span>
             </a>
 
         </nav>
@@ -75,85 +84,79 @@
 
     <main class="main-content">
 
+        <!-- FIX: header moved INSIDE .main-content (was outside the grid, breaking layout) -->
+
+        <header class="top-header">
+
+            <div class="search-box">
+
+                <i data-lucide="search"></i>
+
+                <input
+                    type="text"
+                    placeholder="Search employees, modules..."
+                >
+
+                <span class="shortcut">Ctrl + /</span>
+
+            </div>
+
+            <div class="header-right">
+
+                <button class="icon-btn">
+
+                    <i data-lucide="bell"></i>
+
+                    <span class="badge">3</span>
+
+                </button>
+
+                <button class="icon-btn">
+
+                    <i data-lucide="message-square"></i>
+
+                    <span class="badge">1</span>
+
+                </button>
+
+                <div class="user-profile">
+
+                    <div class="user-avatar" id="topAvatar">
+                        NJ
+                    </div>
+
+                    <div class="user-info">
+
+                        <h4 id="topUserName">Loading...</h4>
+
+                        <p id="topUserRole">Employee</p>
+
+                    </div>
+
+                    <i data-lucide="chevron-down"></i>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- FIX: only ONE placeholder kept (duplicate removed) -->
+
         <div class="page-placeholder">
 
             <h1>Dashboard</h1>
 
-            <p>Next we'll build the top header.</p>
+            <p>Next we'll build the greeting section.</p>
 
         </div>
 
     </main>
 
 </div>
-<header class="top-header">
 
-    <div class="search-box">
-
-        <i data-lucide="search"></i>
-
-        <input
-            type="text"
-            placeholder="Search employees, modules..."
-        >
-
-        <span class="shortcut">Ctrl + /</span>
-
-    </div>
-
-    <div class="header-right">
-
-        <button class="icon-btn">
-
-            <i data-lucide="bell"></i>
-
-            <span class="badge">3</span>
-
-        </button>
-
-        <button class="icon-btn">
-
-            <i data-lucide="message-square"></i>
-
-            <span class="badge">1</span>
-
-        </button>
-
-        <div class="user-profile">
-
-            <div class="user-avatar" id="topAvatar">
-                NJ
-            </div>
-
-            <div class="user-info">
-
-                <h4 id="topUserName">Loading...</h4>
-
-                <p id="topUserRole">Employee</p>
-
-            </div>
-
-            <i data-lucide="chevron-down"></i>
-
-        </div>
-
-    </div>
-
-</header>
-
-<div class="page-placeholder">
-
-    <h1>Dashboard</h1>
-
-    <p>Next we'll build the greeting section.</p>
-
-</div>
-<script>
-
-lucide.createIcons();
-
-</script>
-
+<!-- FIX: single entry point. dashboard.js now calls lucide.createIcons()
+     (duplicate inline script removed) -->
 <script src="dashboard.js"></script>
 
 </body>
