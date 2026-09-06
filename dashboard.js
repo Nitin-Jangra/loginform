@@ -1,3 +1,19 @@
+// =======================================
+// HRMS Dashboard - Step 1 + Step 2
+// Layout + Header (Supabase Connected)
+// =======================================
+
+// ---------------------------------------
+// Supabase configuration
+// FIX: credentials were never defined anywhere,
+// which caused "supabaseClient is not defined".
+// Use the SAME URL / anon key as your login page,
+// or define them in a supabase-config.js file loaded
+// BEFORE this script (see comment in dashboard.html).
+// ---------------------------------------
+const SUPABASE_URL = "https://qalpehjzykkpvkzzikwl.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_mWRL6nZ6vt1a78yuCdcNKA_kqI-1s_C";
+
 // If a config file already created the client, reuse it.
 // Otherwise create it here (only when real credentials are set).
 let supabaseClient = window.supabaseClient || null;
@@ -624,4 +640,5 @@ if (logoutBtn) {
         window.location.href = "index.html";
 
     });
+
 }
