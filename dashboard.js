@@ -27,8 +27,7 @@ if (!supabaseClient && window.supabase && isSupabaseConfigured) {
 }
 
 // ---------------------------------------
-// Get logged-in user
-// FIX: safe JSON parse (crashed on corrupted storage)
+// Get logged-in user (safe JSON parse)
 // ---------------------------------------
 let loggedInUser = null;
 
@@ -39,6 +38,11 @@ try {
     loggedInUser = null;
 }
 
+// FIX: dashboardData is now properly declared
+// (previously created as an implicit global, which breaks
+// in strict mode / modules and is fragile in general)
+let dashboardData = null;
+
 // Redirect if user is not logged in
 if (!loggedInUser) {
     window.location.replace("index.html");
@@ -47,11 +51,11 @@ if (!loggedInUser) {
 // Page Load
 document.addEventListener("DOMContentLoaded", async () => {
 
-    // FIX: stop here when redirecting (previously the code kept
+    // Stop here when redirecting (previously the code kept
     // running with a null user and crashed on loggedInUser.id)
     if (!loggedInUser) return;
 
-    // Initialize Lucide Icons (only place it is called now)
+    // Initialize Lucide Icons
     if (window.lucide) {
         lucide.createIcons();
     }
@@ -60,7 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // =======================================
-// Load Header Data
+// Load Header Data (+ fills dashboardData)
 // =======================================
 
 async function loadHeader() {
@@ -68,10 +72,13 @@ async function loadHeader() {
 
         // -----------------------------
         // Fallback values (used when Supabase is not configured,
-        // so the header still renders instead of crashing)
+        // so the header + greeting still render instead of crashing)
         // -----------------------------
-        let fullName = loggedInUser.name || loggedInUser.email || "User";
+        let user = loggedInUser;
+        let profile = null;
+        let departmentName = "Not Assigned";
         let designationName = "Employee";
+        let fullName = loggedInUser.name || loggedInUser.email || "User";
 
         // -----------------------------
         // Fetch from Supabase (only when the client exists)
@@ -81,51 +88,65 @@ async function loadHeader() {
             // -----------------------------
             // Fetch User
             // -----------------------------
-            const { data: user, error: userError } = await supabaseClient
+            const { data: dbUser, error: userError } = await supabaseClient
                 .from("users")
                 .select("*")
                 .eq("id", loggedInUser.id)
                 .single();
 
-            console.log("User:", user);
-            console.log("User Error:", userError);
-
             if (userError) throw userError;
+
+            user = dbUser;
 
             // -----------------------------
             // Fetch Employee Profile
             // -----------------------------
-            const { data: profile, error: profileError } = await supabaseClient
+            const { data: dbProfile, error: profileError } = await supabaseClient
                 .from("employee_profiles")
                 .select("*")
                 .eq("user_id", user.id)
                 .maybeSingle();
 
-            console.log("Profile:", profile);
-            console.log("Profile Error:", profileError);
-
             if (profileError) throw profileError;
+
+            profile = dbProfile;
+
+            // -----------------------------
+            // Fetch Department
+            // -----------------------------
+            if (profile?.department_id) {
+
+                const { data, error: deptError } = await supabaseClient
+                    .from("departments")
+                    .select("name")
+                    .eq("id", profile.department_id)
+                    .maybeSingle();
+
+                if (deptError) throw deptError;
+
+                if (data) {
+                    departmentName = data.name;
+                }
+
+            }
 
             // -----------------------------
             // Fetch Designation
             // -----------------------------
             if (profile?.designation_id) {
 
-                const { data: designation, error: designationError } =
-                    await supabaseClient
-                        .from("designations")
-                        .select("name")
-                        .eq("id", profile.designation_id)
-                        .maybeSingle();
+                const { data, error: desigError } = await supabaseClient
+                    .from("designations")
+                    .select("name")
+                    .eq("id", profile.designation_id)
+                    .maybeSingle();
 
-                console.log("Designation:", designation);
-                console.log("Designation Error:", designationError);
+                if (desigError) throw desigError;
 
-                if (designationError) throw designationError;
-
-                if (designation) {
-                    designationName = designation.name;
+                if (data) {
+                    designationName = data.name;
                 }
+
             }
 
             // -----------------------------
@@ -136,7 +157,7 @@ async function loadHeader() {
                 : (user.name || fullName);
 
         } else if (!supabaseClient) {
-            // FIX: warn instead of throwing a ReferenceError
+            // Warn instead of throwing a ReferenceError
             console.warn(
                 "Supabase is not configured yet. " +
                 "Set SUPABASE_URL / SUPABASE_ANON_KEY in dashboard.js " +
@@ -145,25 +166,91 @@ async function loadHeader() {
         }
 
         // -----------------------------
+        // Shared dashboard data
+        // -----------------------------
+        dashboardData = {
+            user,
+            profile,
+            departmentName,
+            designationName,
+            fullName
+        };
+
+        // -----------------------------
         // Update Header UI
         // -----------------------------
         document.getElementById("topUserName").textContent = fullName;
         document.getElementById("topUserRole").textContent = designationName;
         document.getElementById("topAvatar").textContent = getInitials(fullName);
 
+        // -----------------------------
+        // Greeting Section
+        // -----------------------------
+        loadGreeting();
+
+        // -----------------------------
+        // Employee Profile Card (Step 4)
+        // -----------------------------
+        loadProfileCard();
+
     } catch (err) {
 
         console.error("Dashboard Error:", err);
 
-        // FIX: show the real reason to make future debugging easier
+        // Show the real reason to make future debugging easier
         alert("Unable to load employee details: " + (err?.message || err));
 
     }
 }
 
 // =======================================
+// Greeting Section (Step 3)
+// =======================================
+
+function loadGreeting() {
+
+    // Guard: never run before dashboardData exists
+    if (!dashboardData) return;
+
+    const hour = new Date().getHours();
+
+    let greeting = "Good Evening";
+
+    if (hour < 12) greeting = "Good Morning";
+    else if (hour < 17) greeting = "Good Afternoon";
+
+    document.getElementById("welcomeText").textContent =
+        `${greeting}, ${dashboardData.fullName}! 👋`;
+
+    document.getElementById("currentDate").textContent =
+        new Date().toLocaleDateString("en-IN", {
+
+            weekday: "long",
+
+            day: "numeric",
+
+            month: "long",
+
+            year: "numeric"
+
+        });
+
+    // FIX: fallback shown instead of the literal text "undefined"
+    // when the users row has no employee_id yet
+    document.getElementById("greetingEmployeeId").textContent =
+        dashboardData.user?.employee_id || "Not Set";
+
+    document.getElementById("greetingDepartment").textContent =
+        dashboardData.departmentName;
+
+    document.getElementById("greetingDesignation").textContent =
+        dashboardData.designationName;
+
+}
+
+// =======================================
 // Helper - Generate Avatar Initials
-// FIX: handles double spaces / extra whitespace safely
+// (handles double spaces / extra whitespace safely)
 // =======================================
 
 function getInitials(name) {
@@ -181,17 +268,91 @@ function getInitials(name) {
 }
 
 // =======================================
+// Employee Profile Card (Step 4)
+// =======================================
+
+function loadProfileCard() {
+
+    // Guard: never run before dashboardData exists
+    if (!dashboardData) return;
+
+    const profile = dashboardData.profile;
+    const user = dashboardData.user;
+
+    // Avatar
+
+    document.getElementById("profileAvatar").textContent =
+        getInitials(dashboardData.fullName);
+
+    // Basic Info
+
+    document.getElementById("profileName").textContent =
+        dashboardData.fullName;
+
+    document.getElementById("profileDesignation").textContent =
+        dashboardData.designationName;
+
+    document.getElementById("profileDepartment").textContent =
+        dashboardData.departmentName;
+
+    // Details
+
+    // FIX: fallbacks instead of the literal text "undefined"
+    // when employee_id / email are missing
+    document.getElementById("profileEmployeeId").textContent =
+        user?.employee_id || "Not Set";
+
+    document.getElementById("profileEmail").textContent =
+        user?.email || "Not Added";
+
+    document.getElementById("profilePhone").textContent =
+        profile?.phone || "Not Added";
+
+    const location = [
+        profile?.city,
+        profile?.state,
+        profile?.country
+    ]
+        .filter(Boolean)
+        .join(", ");
+
+    document.getElementById("profileLocation").textContent =
+        location || "Not Added";
+
+    document.getElementById("profileJoiningDate").textContent =
+        formatJoiningDate(profile?.joining_date);
+
+}
+
+// FIX: the database stores dates like "2024-03-15" -
+// format them nicely instead of showing the raw string.
+// Falls back to the raw value if it cannot be parsed.
+function formatJoiningDate(value) {
+
+    if (!value) return "Not Available";
+
+    const parsed = new Date(value);
+
+    if (isNaN(parsed.getTime())) return value;
+
+    return parsed.toLocaleDateString("en-IN", {
+
+        day: "numeric",
+
+        month: "short",
+
+        year: "numeric",
+
+        timeZone: "UTC"
+
+    });
+
+}
+
+// =======================================
 // Placeholder Functions
 // (Future Components)
 // =======================================
-
-function loadGreeting() {
-    // Step 3
-}
-
-function loadProfileCard() {
-    // Step 4
-}
 
 function loadAttendance() {
     // Step 5
