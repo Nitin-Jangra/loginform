@@ -324,13 +324,171 @@
 
         </section>
 
+        <!-- Statistics Section (Step 6) -->
+
+        <section class="stats-section">
+
+            <div class="stat-card present">
+
+                <div class="stat-icon">
+                    <i data-lucide="calendar-check"></i>
+                </div>
+
+                <div>
+
+                    <h3 id="presentDays">0</h3>
+
+                    <p>Present Days</p>
+
+                </div>
+
+            </div>
+
+            <div class="stat-card leave">
+
+                <div class="stat-icon">
+                    <i data-lucide="calendar-range"></i>
+                </div>
+
+                <div>
+
+                    <h3 id="leaveBalance">0</h3>
+
+                    <p>Leave Balance</p>
+
+                </div>
+
+            </div>
+
+            <div class="stat-card overtime">
+
+                <div class="stat-icon">
+                    <i data-lucide="timer"></i>
+                </div>
+
+                <div>
+
+                    <h3 id="overtimeHours">0h</h3>
+
+                    <p>Overtime</p>
+
+                </div>
+
+            </div>
+
+            <div class="stat-card login">
+
+                <div class="stat-icon">
+                    <i data-lucide="clock-3"></i>
+                </div>
+
+                <div>
+
+                    <h3 id="lastLogin">--</h3>
+
+                    <p>Last Login</p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Quick Actions Section (Step 7) -->
+
+        <section class="dashboard-section">
+
+            <div class="section-header">
+
+                <h2>Quick Actions</h2>
+
+                <p>Frequently used HR tools</p>
+
+            </div>
+
+            <div class="quick-actions">
+
+                <div class="quick-card" data-page="attendance">
+                    <i data-lucide="calendar-check"></i>
+                    <span>Attendance</span>
+                </div>
+
+                <div class="quick-card" data-page="leave">
+                    <i data-lucide="calendar-range"></i>
+                    <span>Apply Leave</span>
+                </div>
+
+                <div class="quick-card" data-page="documents">
+                    <i data-lucide="folder-open"></i>
+                    <span>Documents</span>
+                </div>
+
+                <div class="quick-card" data-page="profile">
+                    <i data-lucide="user"></i>
+                    <span>My Profile</span>
+                </div>
+
+                <div class="quick-card" data-page="team">
+                    <i data-lucide="users"></i>
+                    <span>My Team</span>
+                </div>
+
+                <div class="quick-card" data-page="helpdesk">
+                    <i data-lucide="life-buoy"></i>
+                    <span>Helpdesk</span>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Upcoming Holidays Section (Step 7) -->
+
+        <section class="dashboard-section">
+
+            <div class="section-header">
+
+                <h2>Upcoming Holidays</h2>
+
+                <p>Company calendar</p>
+
+            </div>
+
+            <div id="holidayList" class="list-card">
+
+                Loading holidays...
+
+            </div>
+
+        </section>
+
+        <!-- Announcements Section (Step 7) -->
+
+        <section class="dashboard-section">
+
+            <div class="section-header">
+
+                <h2>Latest Announcements</h2>
+
+                <p>Company updates</p>
+
+            </div>
+
+            <div id="announcementList" class="list-card">
+
+                Loading announcements...
+
+            </div>
+
+        </section>
+
         <!-- FIX: only ONE placeholder kept (duplicate removed) -->
 
         <div class="page-placeholder">
 
             <h1>Dashboard</h1>
 
-            <p>Next we'll build the stats section.</p>
+            <p>Next we'll build the profile page.</p>
 
         </div>
 

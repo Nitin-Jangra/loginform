@@ -61,6 +61,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     await loadHeader();
+
+    // -----------------------------
+    // Holidays + Announcements (Step 7)
+    // Company-wide data, independent of the user row -
+    // they keep working even if profile queries fail
+    // -----------------------------
+    loadHolidays();
+    loadAnnouncements();
 });
 
 // =======================================
@@ -197,6 +205,11 @@ async function loadHeader() {
         // Attendance Card (Step 5)
         // -----------------------------
         loadAttendance();
+
+        // -----------------------------
+        // Statistics Cards (Step 6)
+        // -----------------------------
+        loadStats();
 
     } catch (err) {
 
@@ -613,16 +626,287 @@ if (checkOutBtn) {
 }
 
 // =======================================
+// Statistics Cards (Step 6)
+// =======================================
+
+// FIX: same UTC trap as getTodayDate - new Date(y, m, 1) is
+// local midnight, which is the LAST day of the previous month
+// in UTC (e.g. Sep 1, 00:00 IST = Aug 31 UTC). Building the
+// string in local time keeps the monthly range correct.
+function getFirstDayOfMonth() {
+
+    const d = new Date();
+
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`;
+
+}
+
+async function loadStats() {
+
+    // Guard: never run before dashboardData exists
+    if (!dashboardData) return;
+
+    const user = dashboardData.user;
+
+    // Graceful no-DB mode: neutral card values
+    if (!supabaseClient) {
+        updateStatsUI(0, "12", "0h 0m", user.last_login);
+        return;
+    }
+
+    try {
+
+        const firstDay = getFirstDayOfMonth();
+
+        const today = getTodayDate();
+
+        // Monthly attendance
+
+        const { data: attendance, error } = await supabaseClient
+            .from("attendance")
+            .select("*")
+            .eq("user_id", user.id)
+            .gte("attendance_date", firstDay)
+            .lte("attendance_date", today);
+
+        if (error) throw error;
+
+        const presentDays = attendance
+            ? attendance.filter(a => a.status === "Present").length
+            : 0;
+
+        const overtimeMinutes = attendance
+            ? attendance.reduce(
+                (sum, a) => sum + (a.overtime_minutes || 0),
+                0
+            )
+            : 0;
+
+        updateStatsUI(
+            presentDays,
+            "12", // TODO: replace with real leave balance when the leave module exists
+            minutesToHours(overtimeMinutes),
+            user.last_login
+        );
+
+    } catch (err) {
+
+        console.error("Stats load error:", err);
+
+        // Neutral values instead of an unhandled rejection
+        updateStatsUI(0, "12", "0h 0m", user.last_login);
+
+    }
+
+}
+
+function updateStatsUI(presentDays, leaveBalance, overtimeText, lastLogin) {
+
+    // Update Cards
+
+    document.getElementById("presentDays").textContent =
+        presentDays;
+
+    document.getElementById("leaveBalance").textContent =
+        leaveBalance;
+
+    document.getElementById("overtimeHours").textContent =
+        overtimeText;
+
+    document.getElementById("lastLogin").textContent =
+        lastLogin
+            ? formatTime(lastLogin)
+            : "Today";
+
+}
+
+// =======================================
 // Placeholder Functions
 // (Future Components)
 // =======================================
 
-function loadStats() {
-    // Step 6
+// =======================================
+// Quick Actions + Holidays + Announcements (Step 7)
+// =======================================
+
+// Quick Action navigation.
+// "profile" opens the profile page; the other modules show
+// a placeholder alert until their pages are built.
+
+function bindQuickActions() {
+
+    document.querySelectorAll(".quick-card").forEach(card => {
+
+        card.addEventListener("click", () => {
+
+            const page = card.dataset.page;
+
+            switch (page) {
+
+                case "profile":
+                    window.location.href = "profile.html";
+                    break;
+
+                default:
+                    alert(`${page} module will be built next.`);
+
+            }
+
+        });
+
+    });
+
 }
 
-function loadAnnouncements() {
-    // Step 8
+// Elements exist - script runs at end of body
+bindQuickActions();
+
+async function loadHolidays() {
+
+    const container = document.getElementById("holidayList");
+
+    // Guard: section missing from the page
+    if (!container) return;
+
+    // Graceful no-DB mode
+    if (!supabaseClient) {
+        container.innerHTML =
+            "<p>Holidays will appear here once Supabase is connected.</p>";
+        return;
+    }
+
+    try {
+
+        // FIX: toISOString() is UTC - in IST, UTC "today" is still
+        // yesterday between 00:00 and 05:30, which would wrongly
+        // include yesterday's holidays. Reuse the local-date helper.
+        const today = getTodayDate();
+
+        const { data, error } = await supabaseClient
+            .from("holidays")
+            .select("*")
+            .gte("holiday_date", today)
+            .order("holiday_date")
+            .limit(5);
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            container.innerHTML = "<p>No upcoming holidays.</p>";
+            return;
+        }
+
+        container.innerHTML = "";
+
+        const now = new Date();
+
+        const todayMidnight = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate()
+        );
+
+        data.forEach(holiday => {
+
+            // FIX: new Date("YYYY-MM-DD") is parsed as UTC midnight,
+            // which shifts the day-countdown by hours. Parse the
+            // parts and build a local date instead.
+            const parts = String(holiday.holiday_date)
+                .split("T")[0]
+                .split("-")
+                .map(Number);
+
+            const holidayDate = new Date(
+                parts[0],
+                parts[1] - 1,
+                parts[2]
+            );
+
+            const days = Math.round(
+                (holidayDate - todayMidnight) / 86400000
+            );
+
+            // Friendlier labels instead of "0 days" / "1 days"
+            let daysLabel = `${days} days`;
+
+            if (days <= 0) daysLabel = "Today";
+            else if (days === 1) daysLabel = "Tomorrow";
+
+            container.innerHTML += `
+                <div class="list-item">
+                    <div>
+                        <h4>${holiday.title}</h4>
+                        <p>${holidayDate.toLocaleDateString("en-IN")}</p>
+                    </div>
+                    <strong>${daysLabel}</strong>
+                </div>
+            `;
+
+        });
+
+    } catch (err) {
+
+        console.error("Holidays load error:", err);
+
+        container.innerHTML = "<p>Could not load holidays.</p>";
+
+    }
+
+}
+
+async function loadAnnouncements() {
+
+    const container = document.getElementById("announcementList");
+
+    // Guard: section missing from the page
+    if (!container) return;
+
+    // Graceful no-DB mode
+    if (!supabaseClient) {
+        container.innerHTML =
+            "<p>Announcements will appear here once Supabase is connected.</p>";
+        return;
+    }
+
+    try {
+
+        const { data, error } = await supabaseClient
+            .from("announcements")
+            .select("*")
+            .order("created_at", { ascending: false })
+            .limit(5);
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            container.innerHTML = "<p>No announcements.</p>";
+            return;
+        }
+
+        container.innerHTML = "";
+
+        data.forEach(item => {
+
+            container.innerHTML += `
+                <div class="list-item">
+                    <div>
+                        <h4>${item.title}</h4>
+                        <p>${item.description || ""}</p>
+                    </div>
+                    <small>${new Date(item.created_at).toLocaleDateString("en-IN")}</small>
+                </div>
+            `;
+
+        });
+
+    } catch (err) {
+
+        console.error("Announcements load error:", err);
+
+        container.innerHTML = "<p>Could not load announcements.</p>";
+
+    }
+
 }
 
 // =======================================
