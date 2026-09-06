@@ -388,18 +388,26 @@ async function loadAttendance() {
     if (!dashboardData) return;
 
     // Show today's date regardless of DB availability
-    document.getElementById("attendanceDate").textContent =
-        new Date().toLocaleDateString("en-IN", {
+    const dateText = new Date().toLocaleDateString("en-IN", {
 
-            weekday: "long",
+        weekday: "long",
 
-            day: "numeric",
+        day: "numeric",
 
-            month: "long",
+        month: "long",
 
-            year: "numeric"
+        year: "numeric"
 
-        });
+    });
+
+    document.getElementById("attendanceDate").textContent = dateText;
+
+    // Redesign: the blue card also shows the date under Check In
+    const checkInDateEl = document.getElementById("checkInDate");
+
+    if (checkInDateEl) {
+        checkInDateEl.textContent = dateText;
+    }
 
     // Graceful no-DB mode: just show "Absent"
     if (!supabaseClient) {
@@ -549,6 +557,11 @@ function updateAttendanceUI(data) {
 
         document.getElementById("breakTime").textContent = "0m";
 
+        // Redesign: caption under Check Out
+        const caption = document.getElementById("checkOutCaption");
+
+        if (caption) caption.textContent = "Not Checked Out";
+
         return;
 
     }
@@ -566,6 +579,13 @@ function updateAttendanceUI(data) {
         data.check_out
             ? formatTime(data.check_out)
             : "--:--";
+
+    // Redesign: caption under Check Out
+    const caption = document.getElementById("checkOutCaption");
+
+    if (caption) {
+        caption.textContent = data.check_out ? "Checked Out" : "Not Checked Out";
+    }
 
     // FIX: if checked in but not yet out, show live working
     // hours instead of a misleading "0h 0m"
@@ -806,7 +826,9 @@ async function loadHolidays() {
             now.getDate()
         );
 
-        data.forEach(holiday => {
+        const holidayTints = ["tint-green", "tint-purple", "tint-orange"];
+
+        data.forEach((holiday, index) => {
 
             // FIX: new Date("YYYY-MM-DD") is parsed as UTC midnight,
             // which shifts the day-countdown by hours. Parse the
@@ -826,23 +848,31 @@ async function loadHolidays() {
                 (holidayDate - todayMidnight) / 86400000
             );
 
-            // Friendlier labels instead of "0 days" / "1 days"
-            let daysLabel = `${days} days`;
+            // Reference-style labels: "Today" / "Tomorrow" / "In N days"
+            let daysLabel = `In ${days} days`;
 
             if (days <= 0) daysLabel = "Today";
             else if (days === 1) daysLabel = "Tomorrow";
 
             container.innerHTML += `
                 <div class="list-item">
-                    <div>
+                    <span class="tile ${holidayTints[index % holidayTints.length]}">
+                        <i data-lucide="calendar-days"></i>
+                    </span>
+                    <div class="list-info">
                         <h4>${holiday.title}</h4>
                         <p>${holidayDate.toLocaleDateString("en-IN")}</p>
                     </div>
-                    <strong>${daysLabel}</strong>
+                    <strong class="list-badge">${daysLabel}</strong>
                 </div>
             `;
 
         });
+
+        // Icons were injected dynamically - render them now
+        if (window.lucide) {
+            lucide.createIcons();
+        }
 
     } catch (err) {
 
@@ -885,19 +915,31 @@ async function loadAnnouncements() {
 
         container.innerHTML = "";
 
-        data.forEach(item => {
+        const annIcons = ["megaphone", "bell", "gift"];
+
+        const annTints = ["tint-blue", "tint-purple", "tint-orange"];
+
+        data.forEach((item, index) => {
 
             container.innerHTML += `
                 <div class="list-item">
-                    <div>
+                    <span class="tile ${annTints[index % annTints.length]}">
+                        <i data-lucide="${annIcons[index % annIcons.length]}"></i>
+                    </span>
+                    <div class="list-info">
                         <h4>${item.title}</h4>
                         <p>${item.description || ""}</p>
                     </div>
-                    <small>${new Date(item.created_at).toLocaleDateString("en-IN")}</small>
+                    <small class="list-date">${new Date(item.created_at).toLocaleDateString("en-IN")}</small>
                 </div>
             `;
 
         });
+
+        // Icons were injected dynamically - render them now
+        if (window.lucide) {
+            lucide.createIcons();
+        }
 
     } catch (err) {
 

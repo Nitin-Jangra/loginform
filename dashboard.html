@@ -10,12 +10,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-<!-- FIX: Load Supabase JS library (dashboard.js needs it) -->
+<!-- Load Supabase JS library (dashboard.js needs it) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- FIX: Lucide must load BEFORE dashboard.js uses it -->
+<!-- Lucide must load BEFORE dashboard.js uses it -->
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <!-- If you keep your Supabase credentials in a separate config file,
@@ -31,7 +31,7 @@
 
 <div class="dashboard">
 
-    <!-- Sidebar -->
+    <!-- ======================= Sidebar ======================= -->
 
     <aside class="sidebar">
 
@@ -78,13 +78,46 @@
 
         </nav>
 
+        <!-- Leave Balance mini card (DEMO values -
+             TODO: wire to the leave module when it is built) -->
+
+        <div class="sidebar-leave">
+
+            <div class="sidebar-leave-head">
+
+                <h4>Leave Balance</h4>
+
+                <a href="#">View All</a>
+
+            </div>
+
+            <div class="leave-row">
+                <span>Casual Leave</span>
+                <strong>12</strong>
+            </div>
+
+            <div class="leave-row">
+                <span>Sick Leave</span>
+                <strong>08</strong>
+            </div>
+
+            <div class="leave-row">
+                <span>Earned Leave</span>
+                <strong>15</strong>
+            </div>
+
+            <div class="leave-row">
+                <span>Comp Off</span>
+                <strong>04</strong>
+            </div>
+
+        </div>
+
     </aside>
 
-    <!-- Main -->
+    <!-- ======================= Main ======================= -->
 
     <main class="main-content">
-
-        <!-- FIX: header moved INSIDE .main-content (was outside the grid, breaking layout) -->
 
         <header class="top-header">
 
@@ -141,7 +174,7 @@
 
         </header>
 
-        <!-- Greeting Section (Step 3) -->
+        <!-- Greeting Row -->
 
         <section class="greeting-section">
 
@@ -177,13 +210,15 @@
 
                 <button class="btn-primary" id="checkInBtn">
 
-                    <span class="pulse"></span>
+                    <i data-lucide="calendar-check"></i>
 
                     Check In
 
                 </button>
 
                 <button class="btn-secondary" id="checkOutBtn">
+
+                    <i data-lucide="log-out"></i>
 
                     Check Out
 
@@ -193,16 +228,24 @@
 
         </section>
 
-        <!-- Employee Profile Section (Step 4) -->
+        <!-- Profile Card + Attendance Card -->
 
-        <section class="profile-section">
+        <div class="content-grid main-grid">
 
-            <div class="profile-card">
+            <!-- Profile Card -->
+
+            <section class="card profile-section">
 
                 <div class="profile-header">
 
-                    <div class="profile-avatar" id="profileAvatar">
-                        NJ
+                    <div class="avatar-wrap">
+
+                        <div class="profile-avatar" id="profileAvatar">
+                            NJ
+                        </div>
+
+                        <span class="status-dot"></span>
+
                     </div>
 
                     <div class="profile-info">
@@ -211,7 +254,10 @@
 
                             <h2 id="profileName">Loading...</h2>
 
-                            <span class="verified-badge">Verified</span>
+                            <span class="verified-badge">
+                                <i data-lucide="badge-check"></i>
+                                Verified
+                            </span>
 
                         </div>
 
@@ -228,27 +274,42 @@
                 <div class="profile-details">
 
                     <div class="detail-row">
-                        <span>Employee ID</span>
+                        <span class="detail-label">
+                            <i data-lucide="hash"></i>
+                            Employee ID
+                        </span>
                         <strong id="profileEmployeeId">--</strong>
                     </div>
 
                     <div class="detail-row">
-                        <span>Email</span>
+                        <span class="detail-label">
+                            <i data-lucide="mail"></i>
+                            Email
+                        </span>
                         <strong id="profileEmail">--</strong>
                     </div>
 
                     <div class="detail-row">
-                        <span>Phone</span>
+                        <span class="detail-label">
+                            <i data-lucide="phone"></i>
+                            Phone
+                        </span>
                         <strong id="profilePhone">--</strong>
                     </div>
 
                     <div class="detail-row">
-                        <span>Location</span>
+                        <span class="detail-label">
+                            <i data-lucide="map-pin"></i>
+                            Location
+                        </span>
                         <strong id="profileLocation">--</strong>
                     </div>
 
                     <div class="detail-row">
-                        <span>Joining Date</span>
+                        <span class="detail-label">
+                            <i data-lucide="calendar"></i>
+                            Joining Date
+                        </span>
                         <strong id="profileJoiningDate">--</strong>
                     </div>
 
@@ -258,15 +319,15 @@
                     View Full Profile
                 </button>
 
-            </div>
+            </section>
 
-        </section>
+            <!-- Attendance Card (blue gradient) -->
 
-        <!-- Attendance Section (Step 5) -->
+            <section class="card attendance-card">
 
-        <section class="attendance-section">
-
-            <div class="attendance-card">
+                <span class="attendance-watermark">
+                    <i data-lucide="calendar-clock"></i>
+                </span>
 
                 <div class="attendance-header">
 
@@ -286,209 +347,280 @@
 
                 <div class="attendance-grid">
 
-                    <div class="time-box">
+                    <div class="attendance-col">
 
-                        <span>Check In</span>
+                        <span class="att-label">Check In</span>
 
                         <strong id="checkInTime">--:--</strong>
 
+                        <span class="att-sub" id="checkInDate">&nbsp;</span>
+
                     </div>
 
-                    <div class="time-box">
+                    <div class="attendance-col">
 
-                        <span>Check Out</span>
+                        <span class="att-label">Check Out</span>
 
                         <strong id="checkOutTime">--:--</strong>
 
+                        <span class="att-sub" id="checkOutCaption">Not Checked Out</span>
+
                     </div>
 
-                    <div class="time-box">
+                </div>
 
-                        <span>Working Hours</span>
+                <div class="attendance-total">
+
+                    <div>
+
+                        <span class="att-label">Total Working Time</span>
 
                         <strong id="workingHours">0h 0m</strong>
 
                     </div>
 
-                    <div class="time-box">
+                    <span class="att-break">
+                        Break: <strong id="breakTime">0m</strong>
+                    </span>
 
-                        <span>Break</span>
+                </div>
 
-                        <strong id="breakTime">0m</strong>
+            </section>
+
+        </div>
+
+        <!-- Statistics Row -->
+
+        <section class="stats-section">
+
+            <div class="stat-card">
+
+                <span class="tile tint-green">
+                    <i data-lucide="calendar-check"></i>
+                </span>
+
+                <div class="stat-info">
+
+                    <span class="stat-label">Present Days</span>
+
+                    <h3 id="presentDays">0</h3>
+
+                    <span class="stat-caption">This Month</span>
+
+                </div>
+
+            </div>
+
+            <div class="stat-card">
+
+                <span class="tile tint-purple">
+                    <i data-lucide="sun"></i>
+                </span>
+
+                <div class="stat-info">
+
+                    <span class="stat-label">Leave Balance</span>
+
+                    <h3 id="leaveBalance">0</h3>
+
+                    <span class="stat-caption">Days</span>
+
+                </div>
+
+            </div>
+
+            <div class="stat-card">
+
+                <span class="tile tint-orange">
+                    <i data-lucide="clock"></i>
+                </span>
+
+                <div class="stat-info">
+
+                    <span class="stat-label">Overtime</span>
+
+                    <h3 id="overtimeHours">0h</h3>
+
+                    <span class="stat-caption">This Month</span>
+
+                </div>
+
+            </div>
+
+            <div class="stat-card">
+
+                <span class="tile tint-pink">
+                    <i data-lucide="log-in"></i>
+                </span>
+
+                <div class="stat-info">
+
+                    <span class="stat-label">Last Login</span>
+
+                    <h3 id="lastLogin">--</h3>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Quick Actions + Upcoming Holidays -->
+
+        <div class="content-grid split-grid">
+
+            <section class="card quick-section">
+
+                <div class="card-head">
+
+                    <h2>Quick Actions</h2>
+
+                </div>
+
+                <div class="quick-actions">
+
+                    <div class="quick-card" data-page="attendance">
+                        <span class="tile tint-blue">
+                            <i data-lucide="calendar-check"></i>
+                        </span>
+                        <span class="tile-label">Attendance</span>
+                    </div>
+
+                    <div class="quick-card" data-page="leave">
+                        <span class="tile tint-purple">
+                            <i data-lucide="calendar-range"></i>
+                        </span>
+                        <span class="tile-label">Apply Leave</span>
+                    </div>
+
+                    <div class="quick-card" data-page="documents">
+                        <span class="tile tint-orange">
+                            <i data-lucide="folder-open"></i>
+                        </span>
+                        <span class="tile-label">Documents</span>
+                    </div>
+
+                    <div class="quick-card" data-page="profile">
+                        <span class="tile tint-green">
+                            <i data-lucide="user"></i>
+                        </span>
+                        <span class="tile-label">My Profile</span>
+                    </div>
+
+                    <div class="quick-card" data-page="team">
+                        <span class="tile tint-cyan">
+                            <i data-lucide="users"></i>
+                        </span>
+                        <span class="tile-label">My Team</span>
+                    </div>
+
+                    <div class="quick-card" data-page="helpdesk">
+                        <span class="tile tint-pink">
+                            <i data-lucide="life-buoy"></i>
+                        </span>
+                        <span class="tile-label">Helpdesk</span>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="card holidays-section">
+
+                <div class="card-head">
+
+                    <h2>Upcoming Holidays</h2>
+
+                    <a href="#" class="card-link">View Calendar</a>
+
+                </div>
+
+                <div id="holidayList" class="list-card">
+
+                    <p class="list-empty">Loading holidays...</p>
+
+                </div>
+
+            </section>
+
+        </div>
+
+        <!-- Leave Summary + Latest Announcements -->
+
+        <div class="content-grid bottom-grid">
+
+            <section class="card leave-summary-section">
+
+                <div class="card-head">
+
+                    <h2>Leave Summary</h2>
+
+                </div>
+
+                <!-- DEMO values - TODO: wire to the leave module when built -->
+
+                <div class="leave-summary">
+
+                    <div class="donut">
+
+                        <div class="donut-center">
+
+                            <strong>39</strong>
+                            <span>Total</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="donut-legend">
+
+                        <div class="legend-row">
+                            <span class="dot dot-purple"></span>
+                            <span class="legend-label">Casual Leave</span>
+                            <strong>12 Days</strong>
+                        </div>
+
+                        <div class="legend-row">
+                            <span class="dot dot-blue"></span>
+                            <span class="legend-label">Sick Leave</span>
+                            <strong>06 Days</strong>
+                        </div>
+
+                        <div class="legend-row">
+                            <span class="dot dot-orange"></span>
+                            <span class="legend-label">Earned Leave</span>
+                            <strong>15 Days</strong>
+                        </div>
+
+                        <div class="legend-row">
+                            <span class="dot dot-green"></span>
+                            <span class="legend-label">Comp Off</span>
+                            <strong>04 Days</strong>
+                        </div>
 
                     </div>
 
                 </div>
 
-            </div>
+            </section>
 
-        </section>
+            <section class="card announcements-section">
 
-        <!-- Statistics Section (Step 6) -->
+                <div class="card-head">
 
-        <section class="stats-section">
+                    <h2>Latest Announcements</h2>
 
-            <div class="stat-card present">
-
-                <div class="stat-icon">
-                    <i data-lucide="calendar-check"></i>
-                </div>
-
-                <div>
-
-                    <h3 id="presentDays">0</h3>
-
-                    <p>Present Days</p>
+                    <a href="#" class="card-link">View All</a>
 
                 </div>
 
-            </div>
+                <div id="announcementList" class="list-card">
 
-            <div class="stat-card leave">
-
-                <div class="stat-icon">
-                    <i data-lucide="calendar-range"></i>
-                </div>
-
-                <div>
-
-                    <h3 id="leaveBalance">0</h3>
-
-                    <p>Leave Balance</p>
+                    <p class="list-empty">Loading announcements...</p>
 
                 </div>
 
-            </div>
-
-            <div class="stat-card overtime">
-
-                <div class="stat-icon">
-                    <i data-lucide="timer"></i>
-                </div>
-
-                <div>
-
-                    <h3 id="overtimeHours">0h</h3>
-
-                    <p>Overtime</p>
-
-                </div>
-
-            </div>
-
-            <div class="stat-card login">
-
-                <div class="stat-icon">
-                    <i data-lucide="clock-3"></i>
-                </div>
-
-                <div>
-
-                    <h3 id="lastLogin">--</h3>
-
-                    <p>Last Login</p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- Quick Actions Section (Step 7) -->
-
-        <section class="dashboard-section">
-
-            <div class="section-header">
-
-                <h2>Quick Actions</h2>
-
-                <p>Frequently used HR tools</p>
-
-            </div>
-
-            <div class="quick-actions">
-
-                <div class="quick-card" data-page="attendance">
-                    <i data-lucide="calendar-check"></i>
-                    <span>Attendance</span>
-                </div>
-
-                <div class="quick-card" data-page="leave">
-                    <i data-lucide="calendar-range"></i>
-                    <span>Apply Leave</span>
-                </div>
-
-                <div class="quick-card" data-page="documents">
-                    <i data-lucide="folder-open"></i>
-                    <span>Documents</span>
-                </div>
-
-                <div class="quick-card" data-page="profile">
-                    <i data-lucide="user"></i>
-                    <span>My Profile</span>
-                </div>
-
-                <div class="quick-card" data-page="team">
-                    <i data-lucide="users"></i>
-                    <span>My Team</span>
-                </div>
-
-                <div class="quick-card" data-page="helpdesk">
-                    <i data-lucide="life-buoy"></i>
-                    <span>Helpdesk</span>
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- Upcoming Holidays Section (Step 7) -->
-
-        <section class="dashboard-section">
-
-            <div class="section-header">
-
-                <h2>Upcoming Holidays</h2>
-
-                <p>Company calendar</p>
-
-            </div>
-
-            <div id="holidayList" class="list-card">
-
-                Loading holidays...
-
-            </div>
-
-        </section>
-
-        <!-- Announcements Section (Step 7) -->
-
-        <section class="dashboard-section">
-
-            <div class="section-header">
-
-                <h2>Latest Announcements</h2>
-
-                <p>Company updates</p>
-
-            </div>
-
-            <div id="announcementList" class="list-card">
-
-                Loading announcements...
-
-            </div>
-
-        </section>
-
-        <!-- FIX: only ONE placeholder kept (duplicate removed) -->
-
-        <div class="page-placeholder">
-
-            <h1>Dashboard</h1>
-
-            <p>Next we'll build the profile page.</p>
+            </section>
 
         </div>
 
@@ -496,8 +628,6 @@
 
 </div>
 
-<!-- FIX: single entry point. dashboard.js now calls lucide.createIcons()
-     (duplicate inline script removed) -->
 <script src="dashboard.js"></script>
 
 </body>
