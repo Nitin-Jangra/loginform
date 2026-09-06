@@ -1,111 +1,161 @@
-// Dashboard JavaScript
+// =======================================
+// HRMS Dashboard - Step 1 + Step 2
+// Layout + Header (Supabase Connected)
+// =======================================
 
-document.addEventListener("DOMContentLoaded", () => {
-
-    console.log("Dashboard Layout Loaded");
-
-});
-
-// ================================
-// Dashboard - Step 2
-// ================================
-
+// Get logged-in user
 const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
 
+// Redirect if user is not logged in
 if (!loggedInUser) {
-
     window.location.href = "index.html";
-
 }
 
+// Page Load
 document.addEventListener("DOMContentLoaded", async () => {
-
     await loadHeader();
 
+    // Initialize Lucide Icons
     lucide.createIcons();
-
 });
 
-// Load employee details
+// =======================================
+// Load Header Data
+// =======================================
 
-async function loadHeader(){
+async function loadHeader() {
+    try {
 
-try{
+        // -----------------------------
+        // Fetch User
+        // -----------------------------
+        const { data: user, error: userError } = await supabaseClient
+            .from("users")
+            .select("*")
+            .eq("id", loggedInUser.id)
+            .single();
 
-// Users table
+        console.log("User:", user);
+        console.log("User Error:", userError);
 
-const { data:user, error:userError } = await supabaseClient
-.from("users")
-.select("*")
-.eq("id",loggedInUser.id)
-.single();
+        if (userError) throw userError;
 
-if(userError) throw userError;
+        // -----------------------------
+        // Fetch Employee Profile
+        // -----------------------------
+        const { data: profile, error: profileError } = await supabaseClient
+            .from("employee_profiles")
+            .select("*")
+            .eq("user_id", user.id)
+            .maybeSingle();
 
-// Employee profile
+        console.log("Profile:", profile);
+        console.log("Profile Error:", profileError);
 
-const { data:profile } = await supabaseClient
-.from("employee_profiles")
-.select("*")
-.eq("user_id",user.id)
-.maybeSingle();
+        if (profileError) throw profileError;
 
-// Designation
+        // -----------------------------
+        // Fetch Designation
+        // -----------------------------
+        let designationName = "Employee";
 
-let roleName="Employee";
+        if (profile?.designation_id) {
 
-if(profile?.designation_id){
+            const { data: designation, error: designationError } =
+                await supabaseClient
+                    .from("designations")
+                    .select("name")
+                    .eq("id", profile.designation_id)
+                    .maybeSingle();
 
-const { data } = await supabaseClient
-.from("designations")
-.select("name")
-.eq("id",profile.designation_id)
-.maybeSingle();
+            console.log("Designation:", designation);
+            console.log("Designation Error:", designationError);
 
-if(data){
+            if (designationError) throw designationError;
 
-roleName=data.name;
+            if (designation) {
+                designationName = designation.name;
+            }
+        }
 
+        // -----------------------------
+        // Full Name
+        // -----------------------------
+        const fullName = profile
+            ? `${profile.first_name || ""} ${profile.last_name || ""}`.trim()
+            : user.name;
+
+        // -----------------------------
+        // Update Header UI
+        // -----------------------------
+        document.getElementById("topUserName").textContent = fullName;
+        document.getElementById("topUserRole").textContent = designationName;
+        document.getElementById("topAvatar").textContent = getInitials(fullName);
+
+    } catch (err) {
+
+        console.error("Dashboard Error:", err);
+
+        alert("Unable to load employee details.");
+
+    }
 }
 
+// =======================================
+// Helper - Generate Avatar Initials
+// =======================================
+
+function getInitials(name) {
+
+    if (!name) return "HR";
+
+    return name
+        .split(" ")
+        .map(word => word[0])
+        .join("")
+        .substring(0, 2)
+        .toUpperCase();
 }
 
-// Full Name
+// =======================================
+// Placeholder Functions
+// (Future Components)
+// =======================================
 
-const fullName=
-profile
-?`${profile.first_name||""} ${profile.last_name||""}`.trim()
-:user.name;
-
-// Update Header
-
-document.getElementById("topUserName").textContent=fullName;
-document.getElementById("topUserRole").textContent=roleName;
-
-// Avatar
-
-document.getElementById("topAvatar").textContent=
-getInitials(fullName);
-
-}catch(err){
-
-console.error(err);
-
-alert("Unable to load employee details.");
-
+function loadGreeting() {
+    // Step 3
 }
 
+function loadProfileCard() {
+    // Step 4
 }
 
-// Initials
+function loadAttendance() {
+    // Step 5
+}
 
-function getInitials(name){
+function loadStats() {
+    // Step 6
+}
 
-return name
-.split(" ")
-.map(word=>word[0])
-.join("")
-.substring(0,2)
-.toUpperCase();
+function loadAnnouncements() {
+    // Step 8
+}
+
+// =======================================
+// Logout (Future Sidebar Button)
+// =======================================
+
+const logoutBtn = document.getElementById("logoutBtn");
+
+if (logoutBtn) {
+
+    logoutBtn.addEventListener("click", () => {
+
+        localStorage.removeItem("loggedInUser");
+
+        window.location.href = "index.html";
+
+    });
 
 }
