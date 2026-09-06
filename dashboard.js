@@ -1,19 +1,3 @@
-// =======================================
-// HRMS Dashboard - Step 1 + Step 2
-// Layout + Header (Supabase Connected)
-// =======================================
-
-// ---------------------------------------
-// Supabase configuration
-// FIX: credentials were never defined anywhere,
-// which caused "supabaseClient is not defined".
-// Use the SAME URL / anon key as your login page,
-// or define them in a supabase-config.js file loaded
-// BEFORE this script (see comment in dashboard.html).
-// ---------------------------------------
-const SUPABASE_URL = "https://qalpehjzykkpvkzzikwl.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_mWRL6nZ6vt1a78yuCdcNKA_kqI-1s_C";
-
 // If a config file already created the client, reuse it.
 // Otherwise create it here (only when real credentials are set).
 let supabaseClient = window.supabaseClient || null;
@@ -193,6 +177,11 @@ async function loadHeader() {
         // -----------------------------
         loadProfileCard();
 
+        // -----------------------------
+        // Attendance Card (Step 5)
+        // -----------------------------
+        loadAttendance();
+
     } catch (err) {
 
         console.error("Dashboard Error:", err);
@@ -350,13 +339,267 @@ function formatJoiningDate(value) {
 }
 
 // =======================================
+// Attendance Card (Step 5)
+// =======================================
+
+// FIX: toISOString() uses UTC - in IST a check-in between
+// 00:00 and 05:30 would be saved under the PREVIOUS day.
+// This helper builds the date string in local time instead.
+function getTodayDate() {
+
+    const d = new Date();
+
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+}
+
+async function loadAttendance() {
+
+    // Guard: never run before dashboardData exists
+    if (!dashboardData) return;
+
+    // Show today's date regardless of DB availability
+    document.getElementById("attendanceDate").textContent =
+        new Date().toLocaleDateString("en-IN", {
+
+            weekday: "long",
+
+            day: "numeric",
+
+            month: "long",
+
+            year: "numeric"
+
+        });
+
+    // Graceful no-DB mode: just show "Absent"
+    if (!supabaseClient) {
+        updateAttendanceUI(null);
+        return;
+    }
+
+    const today = getTodayDate();
+
+    const { data, error } = await supabaseClient
+        .from("attendance")
+        .select("*")
+        .eq("user_id", dashboardData.user.id)
+        .eq("attendance_date", today)
+        .maybeSingle();
+
+    if (error) {
+        console.error("Attendance load error:", error);
+    }
+
+    updateAttendanceUI(data);
+
+}
+
+async function checkIn() {
+
+    if (!dashboardData) return;
+
+    if (!supabaseClient) {
+        alert("Supabase is not configured yet.");
+        return;
+    }
+
+    const today = getTodayDate();
+
+    const now = new Date().toISOString();
+
+    const { error } = await supabaseClient
+        .from("attendance")
+        .insert([{
+
+            user_id: dashboardData.user.id,
+
+            attendance_date: today,
+
+            check_in: now,
+
+            status: "Present"
+
+        }]);
+
+    if (error) {
+
+        console.error("Check-in error:", error);
+
+        alert(error.message);
+
+        return;
+
+    }
+
+    loadAttendance();
+
+}
+
+async function checkOut() {
+
+    if (!dashboardData) return;
+
+    if (!supabaseClient) {
+        alert("Supabase is not configured yet.");
+        return;
+    }
+
+    const today = getTodayDate();
+
+    const now = new Date();
+
+    const { data } = await supabaseClient
+        .from("attendance")
+        .select("*")
+        .eq("user_id", dashboardData.user.id)
+        .eq("attendance_date", today)
+        .maybeSingle();
+
+    if (!data) {
+
+        alert("Please check in first.");
+
+        return;
+
+    }
+
+    // FIX: prevent overwriting an existing check-out
+    if (data.check_out) {
+
+        alert("You have already checked out today.");
+
+        return;
+
+    }
+
+    const minutes = Math.floor(
+        (now - new Date(data.check_in)) / 60000
+    );
+
+    const { error } = await supabaseClient
+        .from("attendance")
+        .update({
+
+            check_out: now.toISOString(),
+
+            working_minutes: minutes
+
+        })
+        .eq("id", data.id);
+
+    if (error) {
+
+        console.error("Check-out error:", error);
+
+        alert(error.message);
+
+        return;
+
+    }
+
+    loadAttendance();
+
+}
+
+function updateAttendanceUI(data) {
+
+    const status = document.getElementById("attendanceStatus");
+
+    if (!data) {
+
+        status.textContent = "Absent";
+
+        status.classList.remove("present");
+
+        document.getElementById("checkInTime").textContent = "--:--";
+
+        document.getElementById("checkOutTime").textContent = "--:--";
+
+        document.getElementById("workingHours").textContent = "0h 0m";
+
+        document.getElementById("breakTime").textContent = "0m";
+
+        return;
+
+    }
+
+    status.textContent = data.status;
+
+    // FIX: green badge only when not absent
+    // (previously always turned green regardless of status)
+    status.classList.toggle("present", data.status !== "Absent");
+
+    document.getElementById("checkInTime").textContent =
+        formatTime(data.check_in);
+
+    document.getElementById("checkOutTime").textContent =
+        data.check_out
+            ? formatTime(data.check_out)
+            : "--:--";
+
+    // FIX: if checked in but not yet out, show live working
+    // hours instead of a misleading "0h 0m"
+    let workingMinutes = data.working_minutes;
+
+    if (data.check_in && !data.check_out) {
+        workingMinutes = Math.floor(
+            (Date.now() - new Date(data.check_in)) / 60000
+        );
+    }
+
+    document.getElementById("workingHours").textContent =
+        minutesToHours(workingMinutes);
+
+    // FIX: null break_minutes printed "nullm" before
+    document.getElementById("breakTime").textContent =
+        `${data.break_minutes ?? 0}m`;
+
+}
+
+function formatTime(time) {
+
+    return new Date(time).toLocaleTimeString("en-IN", {
+
+        hour: "2-digit",
+
+        minute: "2-digit"
+
+    });
+
+}
+
+function minutesToHours(minutes) {
+
+    const m = Number(minutes) || 0;
+
+    const h = Math.floor(m / 60);
+
+    return `${h}h ${m % 60}m`;
+
+}
+
+// ---------------------------------------
+// Attendance button wiring
+// (elements exist - script runs at end of body)
+// ---------------------------------------
+
+const checkInBtn = document.getElementById("checkInBtn");
+
+if (checkInBtn) {
+    checkInBtn.addEventListener("click", checkIn);
+}
+
+const checkOutBtn = document.getElementById("checkOutBtn");
+
+if (checkOutBtn) {
+    checkOutBtn.addEventListener("click", checkOut);
+}
+
+// =======================================
 // Placeholder Functions
 // (Future Components)
 // =======================================
-
-function loadAttendance() {
-    // Step 5
-}
 
 function loadStats() {
     // Step 6
@@ -381,5 +624,4 @@ if (logoutBtn) {
         window.location.href = "index.html";
 
     });
-
 }
